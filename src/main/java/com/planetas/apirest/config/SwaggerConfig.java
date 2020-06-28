@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.google.common.base.Predicate;
-
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -30,6 +28,7 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo metaInfo() {
+		@SuppressWarnings("rawtypes")
 		ApiInfo apiInfo = new ApiInfo(
 				"Planetas API REST",
 				"API REST para cadastro de planetas para Star Wars.",

@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 
 @Entity
 @Table(name="TB_PLANETA")
@@ -18,10 +20,13 @@ public class Planeta implements Serializable{
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
 	
+	@NotNull
 	private String nome;
 	
+	@NotNull
 	private String clima;
 	
+	@NotNull
 	private String terreno;
 	
 	
