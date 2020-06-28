@@ -7,7 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 
 
 @Entity
@@ -20,13 +20,13 @@ public class Planeta implements Serializable{
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
 	
-	@NotNull
+	@NotEmpty(message = "Nome não pode ficar vazio")
 	private String nome;
 	
-	@NotNull
+	@NotEmpty(message = "Clima não pode ficar vazio")
 	private String clima;
 	
-	@NotNull
+	@NotEmpty(message = "Terreno não pode ficar vazio")
 	private String terreno;
 	
 	
