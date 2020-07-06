@@ -1,8 +1,13 @@
 package com.planetas.apirest.resources;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,37 +36,90 @@ public class PlanetaResource {
 		
 		@PostMapping("/planeta")
 		@ApiOperation(value="Adiciona um Planeta.")
-		public Planeta adicionaPlaneta(@RequestBody Planeta planeta) {
-			return planetaRepository.save(planeta);
+		public ResponseEntity<Planeta> adicionaPlaneta(@RequestBody @Valid Planeta planeta){
+			return new ResponseEntity<Planeta>(planetaRepository.save(planeta),HttpStatus.CREATED);
 		}
 		
 		@GetMapping("/planetas")
 		@ApiOperation(value="Retorna a Lista de Planetas.")
-		public List<Planeta> listaPlanetas(){
-			return planetaRepository.findAll();
+		public ResponseEntity<List<Planeta>> listaPlanetas(){
+		List<Planeta> listaPlanetas = planetaRepository.findAll();
+			if(listaPlanetas.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}else {
+				return new ResponseEntity<List<Planeta>>(listaPlanetas,HttpStatus.OK);
+			}
+				
 		}
 		
 		@GetMapping("/planeta/{nome}")
 		@ApiOperation(value="Acessa o Planeta pelo Nome.")
-		public Planeta buscaPlanetaNome(@PathVariable(value="nome")String nome){
-			return planetaRepository.findByNome(nome);
-		}
-		
+		public ResponseEntity<Planeta> buscaPlanetaNome(@PathVariable(value="nome")String nome){
+			Optional<Planeta> planetaO = Optional.ofNullable(planetaRepository.findByNome(nome));
+			if(!planetaO.isPresent()) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}else {
+				return new ResponseEntity<Planeta>(planetaO.get(),HttpStatus.OK);
+			}
+		}		
 		@GetMapping("/planeta/id/{id}")
 		@ApiOperation(value="Acessa o Planeta pelo Id.")
-		public Planeta buscaPlanetaId(@PathVariable(value="id")long id){
-			return planetaRepository.findById(id);
+		public ResponseEntity<Planeta> buscaPlanetaId(@PathVariable(value="id")long id){
+			Optional<Planeta> planetaO = Optional.ofNullable(planetaRepository.findById(id));
+			if(!planetaO.isPresent()) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}else {
+				return new ResponseEntity<Planeta>(planetaO.get(),HttpStatus.OK);
+			}
 		}
 		
-		@DeleteMapping("/planeta")
-		@ApiOperation(value="Deleta um Planeta.")
-		public void removePlaneta(@RequestBody Planeta planeta) {
-			planetaRepository.delete(planeta);
+		@DeleteMapping("/planeta/{nome}")
+		@ApiOperation(value="Deleta um Planeta pelo Nome.")
+		public ResponseEntity<?> removePlanetaNome(@PathVariable(value="nome")String nome){
+			Optional<Planeta> planetaO = Optional.ofNullable(planetaRepository.findByNome(nome));
+			if(!planetaO.isPresent()) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}else {
+				planetaRepository.delete(planetaO.get());
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
 		}
 		
-		@PutMapping("/planeta")
-		@ApiOperation(value="Altera as Informações de um Planeta.")
-		public Planeta atualizaPlaneta(@RequestBody Planeta planeta) {
-			return planetaRepository.save(planeta);
+		@DeleteMapping("/planeta/id/{id}")
+		@ApiOperation(value="Deleta um Planeta pelo Id.")
+		public ResponseEntity<?> removePlanetaId(@PathVariable(value="id")long id){
+			Optional<Planeta> planetaO = Optional.ofNullable(planetaRepository.findById(id));
+			if(!planetaO.isPresent()) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}else {
+				planetaRepository.delete(planetaO.get());
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+		}
+
+		@PutMapping("/planeta/{nome}")
+		@ApiOperation(value="Altera as Informações de um Planeta pelo Nome.")
+		public ResponseEntity<Planeta> atualizaPlanetaNome(@PathVariable(value="nome") String nome, @RequestBody 
+				@Valid Planeta planeta){
+			Optional<Planeta>planetaO = Optional.ofNullable(planetaRepository.findByNome(nome));
+			if(!planetaO.isPresent()) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}else {
+				planeta.setId(planetaO.get().getId());
+				return new ResponseEntity<Planeta>(planetaRepository.save(planeta), HttpStatus.OK);
+			}
+		}
+		
+		@PutMapping("/planeta/id/{id}")
+		@ApiOperation(value="Altera as Informações de um Planeta pelo Id.")
+		public ResponseEntity<Planeta> atualizaPlanetaId(@PathVariable(value="id") long id, @RequestBody 
+				@Valid Planeta planeta){
+			Optional<Planeta>planetaO = Optional.ofNullable(planetaRepository.findById(id));
+			if(!planetaO.isPresent()) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}else {
+				planeta.setId(planetaO.get().getId());
+				return new ResponseEntity<Planeta>(planetaRepository.save(planeta), HttpStatus.OK);
+			}
 		}
 }
