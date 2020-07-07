@@ -73,18 +73,6 @@ public class PlanetaResource {
 			}
 		}
 		
-		@DeleteMapping("/planeta/{nome}")
-		@ApiOperation(value="Deleta um Planeta pelo Nome.")
-		public ResponseEntity<?> removePlanetaNome(@PathVariable(value="nome")String nome){
-			Optional<Planeta> planetaO = Optional.ofNullable(planetaRepository.findByNome(nome));
-			if(!planetaO.isPresent()) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}else {
-				planetaRepository.delete(planetaO.get());
-				return new ResponseEntity<>(HttpStatus.OK);
-			}
-		}
-		
 		@DeleteMapping("/planeta/id/{id}")
 		@ApiOperation(value="Deleta um Planeta pelo Id.")
 		public ResponseEntity<?> removePlanetaId(@PathVariable(value="id")long id){
@@ -94,19 +82,6 @@ public class PlanetaResource {
 			}else {
 				planetaRepository.delete(planetaO.get());
 				return new ResponseEntity<>(HttpStatus.OK);
-			}
-		}
-
-		@PutMapping("/planeta/{nome}")
-		@ApiOperation(value="Altera as Informações de um Planeta pelo Nome.")
-		public ResponseEntity<Planeta> atualizaPlanetaNome(@PathVariable(value="nome") String nome, @RequestBody 
-				@Valid Planeta planeta){
-			Optional<Planeta>planetaO = Optional.ofNullable(planetaRepository.findByNome(nome));
-			if(!planetaO.isPresent()) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}else {
-				planeta.setId(planetaO.get().getId());
-				return new ResponseEntity<Planeta>(planetaRepository.save(planeta), HttpStatus.OK);
 			}
 		}
 		
